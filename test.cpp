@@ -1,20 +1,12 @@
 #include <iostream>
-#include <string>
-#include <cstring>
 #include "myStack.h"
-#include "evaluator.h"
 
-using namespace mystack;
-using std::cin;
 using std::cout;
+using std::cin;
 using std::endl;
-using std::string;
 
 int main(){
-  Evaluator eval;
-  string expression;
+  cout<<"build succeeded\n";
 
-  cout<<"build successed\n";
-  
   return 0;
 }
