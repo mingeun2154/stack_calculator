@@ -9,7 +9,8 @@
 
 using namespace mystack;
 using std::string;
-using std::istream;
+using std::cout;
+using std::endl;
 
 string Evaluator::read_expression(){
   string expression;
@@ -19,46 +20,130 @@ string Evaluator::read_expression(){
 
 string Evaluator::convert_to_postfix(string s)
 {
-  string postfix;
+  string postfix; 
   size_t index = 0;
   Stack<char> operators;
   char symbol; // operator
-  double number;
+  double number; // operands
   const char DECIMAL = '.';
   const char RIGHT_PARENTHESIS = ')';
   const char LEFT_PARENTHESIS = '(';
+  const char* FOUR_OPERATORS = "+-*/";
 
-  while (s[index] != '\n')
-  {
-    if (isdigit(s[index]) || s[index] == DECIMAL) // operands
-    {
-      while(isdigit(s[index]))
-        postfix=postfix+" "+s[index];
+  cout<<"start converting\n";
+
+  while (index<=s.length()){
+    // cout<<index<<" ";
+    // postfix+=" ";
+    // case 1: numbers detected
+    if (isdigit(s[index]) || s[index] == DECIMAL){
+      while (isdigit(s[index]) || s[index] == DECIMAL){
+        postfix=postfix+s[index];
+        index++;
+      }
+      postfix+=" ";
+      // cout<<"detected number\n";
     }
-    else if (strchr("+-*/", s[index]) != NULL) // comparing priorities of operators 
-    {
-      if(s[index]=='*'||s[index]=='/') // * / has a highst priority
+    // case 2: operators detected
+    else if (strchr(FOUR_OPERATORS, s[index]) != NULL){
+      // if stack is empty, just push
+      if(operators.is_empty())
         operators.push(s[index]);
-      else{  // + - has lower priority
-        while(strchr("+-*/", operators.top())!=NULL){
-          postfix=postfix+" "+operators.top();
-          operators.pop();
+      // if stack has another operators, compare priority
+      else{
+        // case 2-1: *, / detected
+        if(s[index]=='*'||s[index]=='/') // *, / has a highst priority
+          operators.push(s[index]);
+        // case 2-2: +,- detected
+        else{  // +, - has lower priority
+          while(strchr(FOUR_OPERATORS, operators.top())!=NULL){
+            postfix=postfix+operators.top()+" ";
+            operators.pop();
+            if(operators.is_empty())
+              break;
+          }
           operators.push(s[index]);
         }
       }
+      index++;
+      // cout<<"detected operators\n";
     }
-    else if (s[index] == LEFT_PARENTHESIS)
+
+    //case 3: '(' detected
+    else if (s[index] == LEFT_PARENTHESIS){
       operators.push(s[index]);
+      index++;
+    }
+
+    // case 4: ')' detected
     else if (s[index] == RIGHT_PARENTHESIS){
+      index++;
       while(operators.top()!=LEFT_PARENTHESIS){
-        postfix=postfix+" "+operators.top();
+        postfix=postfix+operators.top()+" ";
         operators.pop();
       }
       operators.pop(); // extract ')'
     }
-    else if(s[index] == ' '){;} // ignore whitespace
-    index++;
+    else if(s[index] == ' '){
+      ++index;
+    } // ignore whitespace
   }
 
   return postfix;
+}
+
+double evaluate_postfix(string s){
+  Stack<double> operands;
+  size_t index = 0;
+  double num1, num2;
+
+  while(index<=s.length()){
+    // case 1: number or whitespace detected
+    if (isdigit(s[index])){
+      operands.push(s[index]);
+      index++;
+    }
+    // case 2: operators detected
+    else{
+      switch (s[index]){
+      case '+':
+        num1=operands.top();
+        operands.pop();
+        num2=operands.top();
+        operands.pop();
+        operands.push(num1+num2);
+        index++;
+        break;
+      case '-':
+        num1=operands.top();
+        operands.pop();
+        num2=operands.top();
+        operands.pop();
+        operands.push(num1-num2);
+        index++;
+        break;
+      case '*':
+        num1=operands.top();
+        operands.pop();
+        num2=operands.top();
+        operands.pop();
+        operands.push(num1*num2);
+      case '/':
+        num1=operands.top();
+        operands.pop();
+        num2=operands.top();
+        operands.pop();
+        operands.push(num1/num2);
+        index++;
+        break;
+      case ' ':
+        index++;
+        break;
+      default:
+        break;
+      }
+    }
+  }
+
+  return operands.top();
 }

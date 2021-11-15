@@ -233,6 +233,6 @@ namespace linkedList
       }
       cout<<'\n';
     }
-} // LinkedList
+} // linkedList
 
 #endif // NODE_H_

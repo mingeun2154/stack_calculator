@@ -14,8 +14,7 @@ class Evaluator
 public:
   string read_expression();
   string convert_to_postfix(string s);
-  // double evaluate_postfix(string s);
-
+  double evaluate_postfix(string s);
 };
 
 #endif
