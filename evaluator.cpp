@@ -18,8 +18,7 @@ string Evaluator::read_expression(){
   return expression;
 }
 
-string Evaluator::convert_to_postfix(string s)
-{
+string Evaluator::convert_to_postfix(string s){
   string postfix; 
   size_t index = 0;
   Stack<char> operators;
@@ -33,8 +32,6 @@ string Evaluator::convert_to_postfix(string s)
   cout<<"start converting\n";
 
   while (index<=s.length()){
-    // cout<<index<<" ";
-    // postfix+=" ";
     // case 1: numbers detected
     if (isdigit(s[index]) || s[index] == DECIMAL){
       while (isdigit(s[index]) || s[index] == DECIMAL){
@@ -42,7 +39,6 @@ string Evaluator::convert_to_postfix(string s)
         index++;
       }
       postfix+=" ";
-      // cout<<"detected number\n";
     }
     // case 2: operators detected
     else if (strchr(FOUR_OPERATORS, s[index]) != NULL){
@@ -66,7 +62,6 @@ string Evaluator::convert_to_postfix(string s)
         }
       }
       index++;
-      // cout<<"detected operators\n";
     }
 
     //case 3: '(' detected
@@ -92,16 +87,21 @@ string Evaluator::convert_to_postfix(string s)
   return postfix;
 }
 
-double evaluate_postfix(string s){
+double Evaluator::evaluate_postfix(string s){
   Stack<double> operands;
   size_t index = 0;
   double num1, num2;
+  const char DECIMAL = '.';
 
-  while(index<=s.length()){
-    // case 1: number or whitespace detected
-    if (isdigit(s[index])){
-      operands.push(s[index]);
-      index++;
+  while(index<s.length()){
+    // case 1: number detected
+    if (isdigit(s[index])||s[index]==DECIMAL){
+      string str;
+      while(s[index]!=' '){
+        str+=s[index];
+        index++;
+      }
+      operands.push(stod(str));
     }
     // case 2: operators detected
     else{
@@ -111,7 +111,7 @@ double evaluate_postfix(string s){
         operands.pop();
         num2=operands.top();
         operands.pop();
-        operands.push(num1+num2);
+        operands.push(num2+num1);
         index++;
         break;
       case '-':
@@ -119,7 +119,7 @@ double evaluate_postfix(string s){
         operands.pop();
         num2=operands.top();
         operands.pop();
-        operands.push(num1-num2);
+        operands.push(num2-num1);
         index++;
         break;
       case '*':
@@ -127,23 +127,25 @@ double evaluate_postfix(string s){
         operands.pop();
         num2=operands.top();
         operands.pop();
-        operands.push(num1*num2);
+        operands.push(num2*num1);
+        index++;
+        break;
       case '/':
         num1=operands.top();
         operands.pop();
         num2=operands.top();
         operands.pop();
-        operands.push(num1/num2);
+        operands.push(num2/num1);
         index++;
         break;
       case ' ':
         index++;
         break;
-      default:
+      case '\0':
+        index++;
         break;
       }
     }
   }
-
   return operands.top();
 }

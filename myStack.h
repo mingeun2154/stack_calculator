@@ -43,14 +43,11 @@ namespace mystack
 
     void pop(){
       assert(top_ptr!=NULL); // check underflow
-      Node<Item>* remove_ptr=this->top_ptr; //Remember a node to remove
-      if(remove_ptr==NULL);
-      else{
-        this->top_ptr=(this->top_ptr)->nextLink();
-        if(this->top_ptr!=NULL)
-          (this->top_ptr)->set_prevLink(NULL);
-        delete remove_ptr;
-      }
+      Node<Item>* remove_ptr=top_ptr; //Remember a node to remove
+      top_ptr=top_ptr->nextLink();
+      if(top_ptr!=NULL)
+        top_ptr->set_prevLink(NULL);
+      delete remove_ptr;
     }
     
     bool is_empty(){
