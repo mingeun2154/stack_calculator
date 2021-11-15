@@ -10,6 +10,7 @@
 using namespace mystack;
 using std::string;
 using std::cout;
+using std::cin;
 using std::endl;
 
 string Evaluator::read_expression(){
@@ -29,8 +30,6 @@ string Evaluator::convert_to_postfix(string s){
   const char LEFT_PARENTHESIS = '(';
   const char* FOUR_OPERATORS = "+-*/";
 
-  cout<<"start converting\n";
-
   while (index<=s.length()){
     // case 1: numbers detected
     if (isdigit(s[index]) || s[index] == DECIMAL){
@@ -40,7 +39,12 @@ string Evaluator::convert_to_postfix(string s){
       }
       postfix+=" ";
     }
-    // case 2: operators detected
+    // case 2: variable detected
+    else if(isalpha(s[index])){
+      postfix=postfix+s[index]+" ";
+      index++;
+    }
+    // case 3: operators detected
     else if (strchr(FOUR_OPERATORS, s[index]) != NULL){
       // if stack is empty, just push
       if(operators.is_empty())
@@ -64,13 +68,13 @@ string Evaluator::convert_to_postfix(string s){
       index++;
     }
 
-    //case 3: '(' detected
+    //case 4: '(' detected
     else if (s[index] == LEFT_PARENTHESIS){
       operators.push(s[index]);
       index++;
     }
 
-    // case 4: ')' detected
+    // case 5: ')' detected
     else if (s[index] == RIGHT_PARENTHESIS){
       index++;
       while(operators.top()!=LEFT_PARENTHESIS){
@@ -102,6 +106,13 @@ double Evaluator::evaluate_postfix(string s){
         index++;
       }
       operands.push(stod(str));
+    }
+    if (isalpha(s[index])){
+      double var;
+      cout<<"value of "<<s[index]<<": ";
+      cin>>var;
+      operands.push(var);
+      index++;
     }
     // case 2: operators detected
     else{
